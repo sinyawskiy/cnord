@@ -1,0 +1,44 @@
+<html>
+<head>
+<title>C-NORD Services</title>
+<script>
+    var cnord = {};
+    cnord.ws = undefined;
+    cnord.messagesHanlder = undefined;
+    cnord.onLoad = function(){
+        ws = new WebSocket("ws://127.0.0.1:8080/websocket");
+        ws.onmessage = function(e){
+           cnord.addMessage(e.data)
+        };
+        cnord.ws = ws;
+        cnord.messagesHanlder = document.getElementById('messages');
+    };
+    cnord.getColumn = function(data){
+        if(typeof(data)=='undefined'){data='';}
+        var column = document.createElement('td');
+        var textNode = document.createTextNode(data);
+        column.appendChild(textNode);
+        return column;
+    };
+    cnord.addMessage = function(data){
+        var message = JSON.parse(data);
+        var row = document.createElement('tr');
+            row.appendChild(this.getColumn(message['service']));
+            row.appendChild(this.getColumn(message['key']));
+            row.appendChild(this.getColumn(message['value']));
+        cnord.messagesHanlder.appendChild(row);
+    }
+
+</script>
+</head>
+<body onload="cnord.onLoad()">
+<table>
+    <thead>
+        <tr>
+             <td>Сервис</td><td>Ключ</td><td>Значение</td>
+        </tr>
+    </thead>
+    <tbody id="messages"></tbody>
+</table>
+</body>
+</html>
